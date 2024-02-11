@@ -197,13 +197,13 @@ describe DraftPunk::Model::ActiveRecordInstanceMethods do
       it 'is the most recent version approved' do
         expect(@live_room.name).to eq 'Living Room'
         expect(@live_room.previous_version).to be_blank
-        @draft_room.update_attributes name: 'Parlour'
+        @draft_room.update name: 'Parlour'
 
         @live_room.publish_draft!
         expect(@live_room.reload.previous_version.name).to eq 'Living Room'
         expect(@live_room.previous_versions.count).to eq 1
 
-        @live_room.editable_version.update_attributes name: 'Library'
+        @live_room.editable_version.update name: 'Library'
         @live_room.publish_draft!
         expect(@live_room.reload.previous_version.name).to eq 'Parlour'
         expect(@live_room.previous_versions.count).to eq 2
@@ -267,7 +267,7 @@ describe DraftPunk::Model::ActiveRecordInstanceMethods do
 
     describe '#make_current!' do
       before do
-        @draft_room.update_attributes name: 'Parlour'
+        @draft_room.update name: 'Parlour'
         @live_room.publish_draft!
         @previous_version = @live_room.reload.previous_version
         expect(@previous_version.name).to eq 'Living Room'
@@ -316,7 +316,7 @@ describe DraftPunk::Model::ActiveRecordInstanceMethods do
       room_diff = diff[:rooms].select{|room| room["id"][:draft] == @draft_room.id }.first
       approved_room = @draft_room.approved_version
       expect(room_diff["name"]).to eq({live: approved_room.name, draft: @draft_room.name })
-    end    
+    end
 
     it 'properly shows attributes which have changed or not changed if include_all_attributes argument is true' do
       diff = @house.draft_diff(include_associations: true, include_all_attributes: true)

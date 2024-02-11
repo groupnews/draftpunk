@@ -13,7 +13,7 @@ module DraftPunk
         @live_version = current_approved_version
         @previous_version = self
         @live_version.draft.try(:destroy)
-        @previous_version.update_attributes(
+        @previous_version.update(
           current_approved_version_id: nil,
                      approved_version: @live_version)
         @live_version.publish_draft!
@@ -32,7 +32,7 @@ module DraftPunk
           self.class.const_defined?(:ALLOW_PREVIOUS_VERSIONS_TO_BE_CHANGED) &&
           !self.class::ALLOW_PREVIOUS_VERSIONS_TO_BE_CHANGED
           errors.add :base, 'cannot save previously approved version'
-          throw :abort 
+          throw :abort
         end
       end
 
