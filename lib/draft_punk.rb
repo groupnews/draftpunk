@@ -6,7 +6,7 @@ require 'helpers/helper_methods'
 module DraftPunk
   class ConfigurationError < RuntimeError
     def initialize(message)
-    	@caller = caller[0]
+      @caller = caller[0]
       @message = message
     end
     def to_s
@@ -19,7 +19,7 @@ module DraftPunk
       @message = message
     end
     def to_s
-      "this model doesn't have an approved_version_id column, so you cannot access its draft or approved versions. Add a column approved_version_id (Integer) to enable this tracking."
+      "this model doesn't have an approved_version_id column, so you cannot access its editable or approved versions. Add a column approved_version_id (Integer) to enable this tracking."
     end
   end
 
@@ -37,7 +37,7 @@ module DraftPunk
       @message = message
     end
     def to_s
-      "the draft failed to be created: #{@message}"
+      "the editable version failed to be created: #{@message}"
     end
   end
 end

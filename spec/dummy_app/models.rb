@@ -3,7 +3,7 @@ class House < ActiveRecord::Base
   has_many :permits
 
   NULLIFY_ATTRIBUTES = %i(address)
-  CREATES_NESTED_DRAFTS_FOR = %i(rooms)
+  CREATES_NESTED_EDITABLES_FOR = %i(rooms)
 end
 
 class Room < ActiveRecord::Base
@@ -13,7 +13,7 @@ class Room < ActiveRecord::Base
   has_many   :closets
   has_many   :trim_styles
 
-  CREATES_NESTED_DRAFTS_FOR = %i(custom_flooring_style closets trim_styles)
+  CREATES_NESTED_EDITABLES_FOR = %i(custom_flooring_style closets trim_styles)
 end
 
 class Permit < ActiveRecord::Base

@@ -1,7 +1,7 @@
 module DraftPunkHelper
-  def summarize_draft_changes(draft_diff)
+  def summarize_editable_changes(editable_diff)
     changed = []
-    draft_diff.except("id", :draft_status, :class_info).each do |k,v|
+    editable_diff.except("id", :editable_status, :class_info).each do |k,v|
       if v.is_a?(Array)
         changed << summarize_association_changes(k,v)
       else
@@ -21,7 +21,7 @@ module DraftPunkHelper
       obj.each do |k,v|
         if v.is_a?(Array) #nested association
           return true if did_association_change?(v)
-        elsif k == :draft_status
+        elsif k == :editable_status
           return true if v != :unchanged
         end
       end

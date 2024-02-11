@@ -10,19 +10,19 @@ describe DraftPunk::Model::ActiveRecordClassMethods do
       it "works if the class has no associations" do
         Apartment.requires_approval
         apartment = Apartment.create(name: '450 5th Avenue')
-        expect(apartment.editable_version.is_draft?).to be true
+        expect(apartment.editable_version.is_editable?).to be true
       end
-      it 'sets editable associations for all in the CREATES_NESTED_DRAFTS_FOR constant' do
+      it 'sets editable associations for all in the CREATES_NESTED_EDITABLES_FOR constant' do
         House.requires_approval
-        expect(House.draft_target_associations.sort).to eq House::CREATES_NESTED_DRAFTS_FOR.sort
+        expect(House.editable_target_associations.sort).to eq House::CREATES_NESTED_EDITABLES_FOR.sort
       end
       it 'sets all associations as editable if no associations explicity provided' do
-        stub_const("House::CREATES_NESTED_DRAFTS_FOR", nil)
+        stub_const("House::CREATES_NESTED_EDITABLES_FOR", nil)
         House.requires_approval
-        expect(House.draft_target_associations.sort).to eq %i(permits rooms)
+        expect(House.editable_target_associations.sort).to eq %i(permits rooms)
       end
       it "works if a specified association doesn't exist" do
-        stub_const("House::CREATES_NESTED_DRAFTS_FOR", [:widgets])
+        stub_const("House::CREATES_NESTED_EDITABLES_FOR", [:widgets])
         expect { House.requires_approval }.to_not raise_error
       end
       it "works if nullify argument is empty" do
@@ -58,11 +58,11 @@ describe DraftPunk::Model::ActiveRecordClassMethods do
 
   context :valid_configuration do
     before(:all)  { setup_model_approvals }
-    before        { setup_house_with_draft }
+    before        { setup_house_with_editable }
 
     context :setup do
       it 'has a house with two rooms and a permit' do
-        h = House.first 
+        h = House.first
         expect(h).to eq @house
         expect(h.rooms.count).to eq 2
         expect(h.rooms.pluck(:name).sort).to eq ['Entryway', 'Living Room']
@@ -82,13 +82,13 @@ describe DraftPunk::Model::ActiveRecordClassMethods do
         end
 
         it 'creates draft copies of all associations specified in requires_approval associations argument' do
-          expect(@draft.rooms.count).to eq 2
-          expect(@draft.permits.count).to be_zero 
+          expect(@editable.rooms.count).to eq 2
+          expect(@editable.permits.count).to be_zero
         end
 
         it 'nullifies all attributes specified in requires_approval nullify argument' do
           expect(@house.address).to be_present
-          expect(@draft.address).to be_nil
+          expect(@editable.address).to be_nil
         end
 
         it 'returns approved versions of the object via the approved scope' do
@@ -98,19 +98,19 @@ describe DraftPunk::Model::ActiveRecordClassMethods do
 
         it 'returns draft versions of the object via the draft scope' do
           expect(House.count).to eq 2
-          expect(House.draft.count).to eq 1
+          expect(House.editable.count).to eq 1
         end
       end
 
-      context '.accepts_nested_drafts_for' do
+      context '.accepts_nested_editables_for' do
         it 'creates draft copies of all associations specified in the associations argument' do
-          draft_room = @draft.rooms.where(name: 'Living Room').first
-          expect(draft_room.closets.count    ).to eq(2)
-          expect(draft_room.trim_styles.count).to eq(1)
+          editable_room = @editable.rooms.where(name: 'Living Room').first
+          expect(editable_room.closets.count    ).to eq(2)
+          expect(editable_room.trim_styles.count).to eq(1)
         end
         it "doesn't draft copies of all associations not specified in the associations argument" do
-          draft_room = @draft.rooms.where(name: 'Living Room').first
-          expect(draft_room.electrical_outlets.count).to be_zero
+          editable_room = @editable.rooms.where(name: 'Living Room').first
+          expect(editable_room.electrical_outlets.count).to be_zero
         end
       end
     end

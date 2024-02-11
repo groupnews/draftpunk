@@ -24,7 +24,7 @@ end
 # BECAUSE OF THE GEM'S COUPLING WITH ACTIVERECORD, THE TESTS
 # INTENTIONALLY HIT THE DATABASE.
 
-def setup_house_with_draft
+def setup_house_with_editable
   House.delete_all
   Room.delete_all
   Closet.delete_all
@@ -45,27 +45,27 @@ def setup_house_with_draft
   @house.permits << Permit.new(permit_type: 'Construction')
   @house.save!
 
-  @draft = @house.editable_version
+  @editable = @house.editable_version
 end
 
-def setup_draft_with_changes
-  @draft.architectual_style = "Victorian"
+def setup_editable_with_changes
+  @editable.architectual_style = "Victorian"
 
-  @draft_room = @draft.rooms.first
-  @draft_room.name = 'Parlor'
-  @draft_room.custom_flooring_style.update_column(:name, 'shag')
+  @editable_room = @editable.rooms.first
+  @editable_room.name = 'Parlor'
+  @editable_room.custom_flooring_style.update_column(:name, 'shag')
 
-  closet = @draft_room.closets.where(style: 'wall').first
+  closet = @editable_room.closets.where(style: 'wall').first
   closet.style = 'hidden'
   closet.save!
 
-  @draft_room.closets << Closet.create(style: 'coat')
+  @editable_room.closets << Closet.create(style: 'coat')
 
-  @draft_room.closets.delete(@draft_room.closets.where(style: 'walk-in'))
-  @draft_room.save!
+  @editable_room.closets.delete(@editable_room.closets.where(style: 'walk-in'))
+  @editable_room.save!
 
-  @draft.save!
-  @draft = House.unscoped.find @draft.id
+  @editable.save!
+  @editable = House.unscoped.find @editable.id
 end
 
 def set_house_architectual_style_to_lodge

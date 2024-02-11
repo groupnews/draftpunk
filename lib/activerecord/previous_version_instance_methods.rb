@@ -12,11 +12,11 @@ module DraftPunk
         return unless is_previous_version?
         @live_version = current_approved_version
         @previous_version = self
-        @live_version.draft.try(:destroy)
+        @live_version.editable.try(:destroy)
         @previous_version.update(
           current_approved_version_id: nil,
                      approved_version: @live_version)
-        @live_version.publish_draft!
+        @live_version.publish_editable!
       end
 
       # @return [Activerecord Object]

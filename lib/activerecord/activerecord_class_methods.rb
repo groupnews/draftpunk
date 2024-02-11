@@ -1,13 +1,13 @@
 module DraftPunk
   module Model
-  	module ActiveRecordClassMethods
+    module ActiveRecordClassMethods
       # List of association names this model is configured to have drafts for
       # @return [Array]
-      def draft_target_associations
-        targets = if const_defined?(:CREATES_NESTED_DRAFTS_FOR) && const_get(:CREATES_NESTED_DRAFTS_FOR).is_a?(Array)
-          const_get(:CREATES_NESTED_DRAFTS_FOR).compact
+      def editable_target_associations
+        targets = if const_defined?(:CREATES_NESTED_EDITABLES_FOR) && const_get(:CREATES_NESTED_EDITABLES_FOR).is_a?(Array)
+          const_get(:CREATES_NESTED_EDITABLES_FOR).compact
         else
-          default_draft_target_associations
+          default_editable_target_associations
         end.map(&:to_sym)
       end
 
@@ -31,22 +31,22 @@ module DraftPunk
       #
       # @return (true)
       def set_approved_version_id_callback
-        lambda do |live_obj, draft_obj|
-          draft_obj.approved_version_id = live_obj.id if draft_obj.respond_to?(:approved_version_id)
-          draft_obj.temporary_approved_object = live_obj
+        lambda do |live_obj, editable_obj|
+          editable_obj.approved_version_id = live_obj.id if editable_obj.respond_to?(:approved_version_id)
+          editable_obj.temporary_approved_object = live_obj
           true
         end
       end
 
     protected #################################################################
 
-      def default_draft_target_associations
+      def default_editable_target_associations
         reflect_on_all_associations.select do |reflection|
           DraftPunk.is_relevant_association_type?(reflection) &&
-          !reflection.name.in?(%i(draft approved_version)) &&
+          !reflection.name.in?(%i(editable approved_version)) &&
           reflection.class_name != name # Self referential associations!!! Don't do them!
         end.map{|r| r.name.downcase.to_sym }
       end
-  	end
+    end
   end
 end
