@@ -116,7 +116,6 @@ module DraftPunk
           dupe.save(validate: false)
           dupe.after_create_editable
         rescue => message
-          debugger
           raise DraftCreationError, message
         end
         reload
