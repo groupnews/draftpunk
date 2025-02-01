@@ -225,6 +225,10 @@ This could be useful if your model has an attribute which should not persist. In
 
 If you define a method on your model called `before_publish_editable`, that method will be executed before the editable copy is published. Specifically, it happens after all attributes are copied from the editable copy to the approved version, and right before the approved version is saved. This allows you to do whatever you'd like to the model before it is saved.
 
+#### After publish editable callback
+
+If you define a method on your model called `after_publish_editable`, that method will be executed after the editable copy is published.
+
 #### Customize which attributes are published
 
 When an editable copy is published, most attributes are copied from the copy to the approved version. Naturally, created-at and id would not be copied.

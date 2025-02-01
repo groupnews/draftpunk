@@ -73,6 +73,7 @@ module DraftPunk
           end
         end
         @live_version = self.class.find(@live_version.id)
+        @live_version.after_publish_editable if @live_version.respond_to?(:after_publish_editable)
       end
 
       # Get the object's draft if changes require approval; this method creates one if it doesn't exist yet
